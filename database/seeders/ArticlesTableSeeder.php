@@ -24,6 +24,7 @@ class ArticlesTableSeeder extends Seeder
             Article::create([
                 'title' => $faker->sentence,
                 'body' => $faker->paragraph,
+                'user_id' => '1',
             ]);
         }
     }
