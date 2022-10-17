@@ -49,6 +49,20 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::post('articles', 'App\Http\Controllers\ArticleController@store');
     Route::put('articles/{article}', 'App\Http\Controllers\ArticleController@update');
     Route::delete('articles/{article}', 'App\Http\Controllers\ArticleController@delete');
+
+    // Articles
+    Route::get('articles/{article}', 'App\Http\Controllers\ArticleController@show');
+    Route::post('articles', 'App\Http\Controllers\ArticleController@store');
+    Route::put('articles/{article}', 'App\Http\Controllers\ArticleController@update');
+    Route::delete('articles/{article}', 'App\Http\Controllers\ArticleController@delete');
+
+    // Comments
+    Route::get('articles/{article}/comments', 'App\Http\Controllers\CommentController@index');
+    Route::get('articles/{article}/comments/{comment}', 'App\Http\Controllers\CommentController@show');
+    Route::post('articles/{article}/comments', 'App\Http\Controllers\CommentController@store');
+    Route::put('articles/{article}/comments/{comment}', 'App\Http\Controllers\CommentController@update');
+    Route::delete('articles/{article}/comments/{comment}', 'App\Http\Controllers\CommentController@delete');
+
 });
 
 /* Route::get('articles', 'App\Http\Controllers\ArticleController@index');
