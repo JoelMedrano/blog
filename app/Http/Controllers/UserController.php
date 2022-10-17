@@ -10,6 +10,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use App\Http\Resources\User as UserResource;
+use App\Models\Writer;
 
 class UserController extends Controller
 {
@@ -27,21 +29,34 @@ class UserController extends Controller
     }
 
     public function register(Request $request) {
+
         $validator = Validator::make($request -> all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed'
+            'password' => 'required|string|min:6|confirmed',
+            'editorial' => 'required|string',
+            'short_bio' => 'required|string',
         ]);
+
         if ($validator -> fails()) {
             return response() -> json($validator -> errors() -> toJson(), 400);
         }
-        $user = User::create([
+        
+        $writer = Writer::create([
+            'editorial' => $request->get('editorial'),
+            'short_bio' => $request->get('short_bio'),
+        ]);
+
+        $writer -> user() -> create([
             'name' => $request -> get('name'),
             'email' => $request -> get('email'),
             'password' => Hash::make($request -> get('password'))
         ]);
-        $token = JWTAuth::fromUser($user);
-        return response() -> json(compact('user', 'token'), 201);
+
+        $user = $writer->user;
+
+        $token = JWTAuth::fromUser($writer->user);
+        return response() -> json(new UserResource($user, $token), 201);
     }
 
     public function getAuthenticatedUser() {
@@ -56,6 +71,6 @@ class UserController extends Controller
         } catch (JWTException $e) {
             return response() -> json(['token_absent'], $e ->statusCode);
         }
-        return response() -> json(compact('user'));
+        return response() -> json(new UserResource($user), 200);
     }
 }
