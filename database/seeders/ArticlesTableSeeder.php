@@ -24,17 +24,20 @@ class ArticlesTableSeeder extends Seeder
         // iteramos sobre cada uno y simulamos un inicio de
         // sesión con cada uno para crear artículos en su nombre
         $users = \App\Models\User::all();
+        $image_name = $faker->image('public/storage/articles', 400, 300, null, false);
 
         foreach ($users as $user) {
             // iniciamos sesión con este usuario
             JWTAuth::attempt(['email' => $user->email, 'password' => '123456']);
             // Y ahora con este usuario creamos algunos articulos
             $num_articles = 5;
+
             for ($j = 0; $j < $num_articles; $j++) {
                 Article::create([
                     'title' => $faker->sentence,
                     'body' => $faker->paragraph,
                     'category_id' => $faker->numberBetween(1, 3),
+                    'image' => 'articles/' . $image_name,
                 ]);
             }
         }
