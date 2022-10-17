@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Comment;
 use App\Models\Article;
+use App\Mail\NewComment;
 use App\Http\Resources\Comment as CommentResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class CommentController extends Controller
 {
@@ -43,6 +45,8 @@ class CommentController extends Controller
         ]);
 
         $comment = $article->comments()->save(new Comment($request->all()));
+
+        Mail::to($article->user)->send(new NewComment($comment));
 
         return response()->json(new CommentResource($comment), 201);
     }
