@@ -22,10 +22,6 @@
 | Col 3 is      | Right-Aligned | $20      |
 @endcomponent
 
-@component('mail::promotion')
-    This is the promotion content.
-@endcomponent
-
 @component('mail::subcopy')
     This is the subcopy content.
 @endcomponent

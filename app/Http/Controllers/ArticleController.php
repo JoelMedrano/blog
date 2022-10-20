@@ -22,6 +22,35 @@ class ArticleController extends Controller
         #$this->authorize('viewAny', Article::class);
         return new ArticleCollection(Article::paginate(20));
     }
+
+    public function backend(Request $request){
+
+        $query = Article::query();
+
+        if ($s = $request->input('s')) {
+            $query->whereRaw("title LIKE '%" . $s . "%'")
+                ->orWhereRaw("body LIKE '%" . $s . "%'");
+        }
+
+        if ($sort = $request->input('sort')) {
+            $query->orderBy('created_at', $sort);
+        }        
+
+        $perPage = 9;
+        $page = $request->input('page', 1);
+        $total = $query->count();
+
+        $result = $query->offset(($page - 1) * $perPage)->limit($perPage)->get();
+
+        return [
+            'data' => new ArticleCollection($result),
+            'total' => $total,
+            'page' => $page,
+            'last_page' => ceil($total / $perPage)
+        ];        
+
+    }
+
     public function show(Article $article)
     {
         $this->authorize('view', $article);
